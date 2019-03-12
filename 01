@@ -1,0 +1,19 @@
+# -------------- VM  version 1.1 ------------- #
+#                                              #
+# 42 / filler VM Developped by: Hcao - Abanlin #
+#                                              #
+# -------------------------------------------- #
+launched ./pmorgan-.filler
+$$$ exec p1 : [./pmorgan-.filler]
+launched ./players/abanlin.filler
+$$$ exec p2 : [./players/abanlin.filler]
+Plateau 5 9:
+    012345678
+000 .........
+001 ..O......
+002 .........
+003 ......X..
+004 .........
+Piece 2 3:
+.*.
+***
