@@ -6,31 +6,31 @@
 /*   By: pmorgan- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/12 12:21:12 by pmorgan-          #+#    #+#             */
-/*   Updated: 2019/03/12 15:02:23 by pmorgan-         ###   ########.fr       */
+/*   Updated: 2019/03/13 19:46:35 by pmorgan-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "filler.h"
 
-void		flr_print_map(t_map *a_map)
+void		flr_print_map(t_map *a_map, int fd_out)
 {
 	int	i, j;
 	for (i = 0; i < a_map->dim.y; i++)
 	{
 		for (j = 0; j < a_map->dim.x; j++)
-			ft_putchar(a_map->map[i][j]);
-		ft_putchar('\n');
+			ft_putchar_fd(a_map->map[i][j], fd_out);
+		ft_putchar_fd('\n', fd_out);
 	}
 }
 
-void		flr_print_piece(t_tetro *piece)
+void		flr_print_piece(t_tetro *piece, int fd_out)
 {
 	int	i, j;
 	for (i = 0; i < piece->dim.y; i++)
 	{
 		for (j = 0; j < piece->dim.x; j++)
-			ft_putchar(piece->array[i][j]);
-		ft_putchar('\n');
+			ft_putchar_fd(piece->array[i][j], fd_out);
+		ft_putchar_fd('\n', fd_out);
 	}
 }
 

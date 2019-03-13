@@ -6,7 +6,7 @@
 /*   By: pmorgan- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/09 15:56:51 by pmorgan-          #+#    #+#             */
-/*   Updated: 2019/03/13 18:59:21 by pmorgan-         ###   ########.fr       */
+/*   Updated: 2019/03/13 20:03:40 by pmorgan-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ int			main(void)
 	t_player	player;
 	t_tetro		piece;
 	int		fd;
+	int		fd_out;
 	int		collisions;
 	int		other_collisions;
 	char	search_count;
@@ -93,7 +94,10 @@ int			main(void)
 	int		j;
 	_Bool	success;
 
+
+	dprintf(fd_out, "FLAG 0\n");
 	fd = 0;
+	fd_out = open("output", O_WRONLY);
 //	printf("2 1\n");
 	//fd = open(argv[1], O_RDONLY);
 
@@ -101,8 +105,8 @@ int			main(void)
 		return (1);
 	//if (!flr_retrieve_map_dimensions(&(r_map.dim), fd))
 	//	return (1);
-    r_map.dim.x = 9;
-    r_map.dim.y = 5;
+    r_map.dim.x = 16;
+    r_map.dim.y = 11;
 //	ft_putnbr(r_map.dim.y);
 //	ft_putchar(' ');
 //	ft_putnbr(r_map.dim.x);
@@ -112,14 +116,17 @@ int			main(void)
 	//close(fd);
 	//fd = open(argv[1], O_RDONLY);
 	search_count = 0;
+	dprintf(fd_out, "FLAG 1\n");
 	while (1)
 	{
+
+		dprintf(fd_out, "FLAG 2\n");
 		if (!flr_populate_map(&r_map, &player, fd))
 			return (1);
-//		flr_print_map(&r_map);
+	//	flr_print_map(&r_map, fd_out);
 		if (!flr_retrieve_piece(&piece, &player, fd))
 			return (1);
-//		flr_print_piece(&piece);
+	//	flr_print_piece(&piece, fd_out);
 		flr_find_piece_edges(&piece, player.move_id);
 	
 		distance1 = sqrt(pow((double)r_map.dim.y, 2) + pow((double)r_map.dim.x, 2));
@@ -151,7 +158,10 @@ int			main(void)
 								|| r_map.map[r_map.pn.y + piece.pn.y]\
 								[r_map.pn.x + piece.pn.x] == player.move_id)\
 								&& piece.array[piece.pn.y][piece.pn.x] != '.')
+						{
 							collisions++;
+							dprintf(fd_out, "FLAG collisions++\n");
+						}
 						piece.pn.x++;
 					}
 					piece.pn.y++;
@@ -163,18 +173,23 @@ int			main(void)
 		//			ft_putnbr(r_map.pn.x);
 		//			ft_putchar('\n');
 					//CALC distance1
+					dprintf(fd_out, "FLAG Seeking Distances. Seeking %c\n", ((search_count <= 1) ? player.opponent : player.opponent_move));
 					search_count++;
 					for (i = 0; i < r_map.dim.y; i++)
 					{
 						for (j = 0; j < r_map.dim.x; j++)
 						{
-							if (r_map.map[i][j] == ((search_count <= 1) ? player.opponent : player.opponent_move))
+							dprintf(fd_out, "i%d j%d %c\t\t", i, j, r_map.map[i][j]);
+							if (r_map.map[i][j] == ((search_count <= 1) ? player.opponent : player.opponent))
 							{
 								distance2 = sqrt(pow((double)i - (double)r_map.pn.y, 2)\
 										+ pow((double)j - (double)r_map.pn.x, 2));
+								dprintf(fd_out, "%f Distance Found vs Distance 1 %f\n", distance2, distance1);
 								if (distance2 < distance1)
 								{
+									dprintf(fd_out, "Best Position was %d %d\n", save_best_position.y, save_best_position.x);
 									save_best_position = r_map.pn;
+									dprintf(fd_out, "Best Position is now %d %d\n", save_best_position.y, save_best_position.x);
 		//							printf("d1\t%f\td2\t%f\n", distance1, distance2);
 									distance1 = distance2;
                                     success = 1;
@@ -189,6 +204,8 @@ int			main(void)
 		}
         if (success)
 		{
+			success = 0;
+			dprintf(fd_out, "OUTPUT WAS %d %d\n", save_best_position.y, save_best_position.x);
 			ft_putnbr(save_best_position.y);
 			ft_putchar(' ');
 		    ft_putnbr(save_best_position.x);
